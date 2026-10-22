@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from decimal import Decimal
 from pathlib import Path
 
 import pandas as pd
@@ -14,6 +15,14 @@ from backtester.data import (
 )
 from backtester.engine import Engine
 from backtester.events import MarketEvent, OrderEvent
+from backtester.execution import FixedBpsSlippage, FlatCommission
+
+ZERO_COSTS = {
+    "initial_cash": Decimal("10000"),
+    "fees": FlatCommission(Decimal("0")),
+    "slippage": FixedBpsSlippage(Decimal("0")),
+}
+
 
 # Trading day index -> date in the fixture.
 DAY_2 = pd.Timestamp("2024-01-04")
@@ -40,7 +49,7 @@ def handle_at(csv: Path, ts: pd.Timestamp) -> DataHandle:
 
 
 def test_strategy_cannot_read_future_prices(two_symbols_csv: Path) -> None:
-    engine = Engine(MarketData.from_csv(two_symbols_csv), PeekAtTomorrow())
+    engine = Engine(MarketData.from_csv(two_symbols_csv), PeekAtTomorrow(), **ZERO_COSTS)
     with pytest.raises(LookaheadError):
         engine.run()
 

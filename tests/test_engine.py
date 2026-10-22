@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from decimal import Decimal
 from pathlib import Path
 
 import pandas as pd
@@ -7,6 +8,14 @@ import pytest
 from backtester.data import Clock, ClockError, DataHandle, MarketData
 from backtester.engine import Engine
 from backtester.events import MarketEvent, OrderEvent, Side
+from backtester.execution import FixedBpsSlippage, FlatCommission
+
+ZERO_COSTS = {
+    "initial_cash": Decimal("10000"),
+    "fees": FlatCommission(Decimal("0")),
+    "slippage": FixedBpsSlippage(Decimal("0")),
+}
+
 
 FIRST_DAY = pd.Timestamp("2024-01-02")
 LAST_DAY = pd.Timestamp("2024-02-12")
@@ -44,7 +53,7 @@ def test_strategy_sees_every_day_once_in_order_with_clock_at_event_time(
     two_symbols_csv: Path,
 ) -> None:
     recorder = Recorder()
-    Engine(MarketData.from_csv(two_symbols_csv), recorder).run()
+    Engine(MarketData.from_csv(two_symbols_csv), recorder, **ZERO_COSTS).run()
 
     timestamps = [ts for ts, _, _ in recorder.seen]
     assert len(timestamps) == 30
@@ -56,7 +65,7 @@ def test_strategy_sees_every_day_once_in_order_with_clock_at_event_time(
 
 
 def test_orders_returned_by_strategy_are_logged(two_symbols_csv: Path) -> None:
-    engine = Engine(MarketData.from_csv(two_symbols_csv), BuyWhenCloseIsUp())
+    engine = Engine(MarketData.from_csv(two_symbols_csv), BuyWhenCloseIsUp(), **ZERO_COSTS)
     engine.run()
 
     # AAA's close rises every day after the first; BBB's falls every day.
@@ -69,7 +78,7 @@ def test_orders_returned_by_strategy_are_logged(two_symbols_csv: Path) -> None:
 def test_same_inputs_produce_identical_order_logs(two_symbols_csv: Path) -> None:
     runs = []
     for _ in range(2):
-        engine = Engine(MarketData.from_csv(two_symbols_csv), BuyWhenCloseIsUp())
+        engine = Engine(MarketData.from_csv(two_symbols_csv), BuyWhenCloseIsUp(), **ZERO_COSTS)
         engine.run()
         runs.append(engine.order_log)
 
@@ -84,6 +93,41 @@ def test_clock_cannot_move_backwards() -> None:
 
 
 def test_engine_rejects_events_scheduled_before_the_clock(two_symbols_csv: Path) -> None:
-    engine = Engine(MarketData.from_csv(two_symbols_csv), BackdatedOrder())
+    engine = Engine(MarketData.from_csv(two_symbols_csv), BackdatedOrder(), **ZERO_COSTS)
     with pytest.raises(ClockError):
         engine.run()
+
+
+class FutureDatedOrder:
+    def on_market_event(self, event: MarketEvent, data: DataHandle) -> Sequence[OrderEvent]:
+        return [OrderEvent(event.timestamp + pd.Timedelta(days=1), "AAA", Side.BUY, 1)]
+
+
+class WatchPositionsBuyOnFirstDay:
+    """Buys 1 AAA on day 0 and records the AAA position each day it is called."""
+
+    def __init__(self) -> None:
+        self.engine: Engine | None = None
+        self.aaa_seen: list[int] = []
+
+    def on_market_event(self, event: MarketEvent, data: DataHandle) -> Sequence[OrderEvent]:
+        assert self.engine is not None
+        self.aaa_seen.append(self.engine.portfolio.positions.get("AAA", 0))
+        if event.timestamp == FIRST_DAY:
+            return [OrderEvent(event.timestamp, "AAA", Side.BUY, 1)]
+        return []
+
+
+def test_engine_rejects_orders_dated_after_the_clock(two_symbols_csv: Path) -> None:
+    engine = Engine(MarketData.from_csv(two_symbols_csv), FutureDatedOrder(), **ZERO_COSTS)
+    with pytest.raises(ClockError):
+        engine.run()
+
+
+def test_fill_is_applied_before_strategy_sees_the_next_bar(two_symbols_csv: Path) -> None:
+    strategy = WatchPositionsBuyOnFirstDay()
+    engine = Engine(MarketData.from_csv(two_symbols_csv), strategy, **ZERO_COSTS)
+    strategy.engine = engine
+    engine.run()
+
+    assert strategy.aaa_seen[:3] == [0, 1, 1]

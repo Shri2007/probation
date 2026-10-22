@@ -29,6 +29,37 @@ class EventPriority(IntEnum):
     ORDER = 2
 
 
+def _check_timestamp(timestamp: object) -> None:
+    if not isinstance(timestamp, pd.Timestamp):
+        raise TypeError(f"timestamp must be a pd.Timestamp, got {type(timestamp).__name__}")
+
+
+def _check_symbol(symbol: object) -> None:
+    if not isinstance(symbol, str):
+        raise TypeError(f"symbol must be a str, got {type(symbol).__name__}")
+    if not symbol:
+        raise ValueError("symbol must be non-empty")
+
+
+def _check_trade(side: object, quantity: object) -> None:
+    if not isinstance(side, Side):
+        raise TypeError(f"side must be a Side, got {type(side).__name__}")
+    # bool is an int subclass; True shares is a bug, not a quantity.
+    if not isinstance(quantity, int) or isinstance(quantity, bool):
+        raise TypeError(f"quantity must be an int, got {type(quantity).__name__}")
+    if quantity < 1:
+        raise ValueError(f"quantity must be >= 1, got {quantity}")
+
+
+def _check_money(name: str, value: object, *, allow_zero: bool) -> None:
+    if not isinstance(value, Decimal):
+        raise TypeError(f"{name} must be a Decimal, got {type(value).__name__}")
+    if not value.is_finite():
+        raise ValueError(f"{name} must be finite, got {value}")
+    if value < 0 or (value == 0 and not allow_zero):
+        raise ValueError(f"{name} must be {'>= 0' if allow_zero else '> 0'}, got {value}")
+
+
 @dataclass(frozen=True, slots=True)
 class MarketEvent:
     """A new bar is available for every listed symbol. Carries no prices:
@@ -38,6 +69,11 @@ class MarketEvent:
     symbols: tuple[str, ...]
     priority: ClassVar[EventPriority] = EventPriority.MARKET
 
+    def __post_init__(self) -> None:
+        _check_timestamp(self.timestamp)
+        for symbol in self.symbols:
+            _check_symbol(symbol)
+
 
 @dataclass(frozen=True, slots=True)
 class OrderEvent:
@@ -46,6 +82,11 @@ class OrderEvent:
     side: Side
     quantity: int
     priority: ClassVar[EventPriority] = EventPriority.ORDER
+
+    def __post_init__(self) -> None:
+        _check_timestamp(self.timestamp)
+        _check_symbol(self.symbol)
+        _check_trade(self.side, self.quantity)
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,6 +98,13 @@ class FillEvent:
     fill_price: Decimal
     commission: Decimal
     priority: ClassVar[EventPriority] = EventPriority.FILL
+
+    def __post_init__(self) -> None:
+        _check_timestamp(self.timestamp)
+        _check_symbol(self.symbol)
+        _check_trade(self.side, self.quantity)
+        _check_money("fill_price", self.fill_price, allow_zero=False)
+        _check_money("commission", self.commission, allow_zero=True)
 
 
 Event = MarketEvent | OrderEvent | FillEvent
@@ -77,6 +125,9 @@ class EventQueue:
         heapq.heappush(
             self._heap, (event.timestamp, int(event.priority), next(self._seq), event)
         )
+
+    def peek(self) -> Event:
+        return self._heap[0][-1]
 
     def pop(self) -> Event:
         return heapq.heappop(self._heap)[-1]
