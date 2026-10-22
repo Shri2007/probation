@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pandas as pd
+import pytest
 
 from backtester.events import EventQueue, FillEvent, MarketEvent, OrderEvent, Side
 
@@ -36,3 +37,59 @@ def test_identical_timestamp_and_type_pop_in_insertion_order() -> None:
         queue.push(order)
 
     assert [queue.pop() for _ in range(3)] == orders
+
+
+@pytest.mark.parametrize("quantity", [0, -1])
+def test_order_quantity_must_be_positive(quantity: int) -> None:
+    with pytest.raises(ValueError):
+        OrderEvent(D1, "AAA", Side.BUY, quantity)
+
+
+@pytest.mark.parametrize("quantity", [1.5, True, Decimal("1")])
+def test_order_quantity_must_be_an_int(quantity: object) -> None:
+    with pytest.raises(TypeError):
+        OrderEvent(D1, "AAA", Side.BUY, quantity)  # type: ignore[arg-type]
+
+
+def test_order_side_must_be_a_side_enum() -> None:
+    with pytest.raises(TypeError):
+        OrderEvent(D1, "AAA", "BUY", 1)  # type: ignore[arg-type]
+
+
+def test_order_symbol_must_be_a_non_empty_string() -> None:
+    with pytest.raises(ValueError):
+        OrderEvent(D1, "", Side.BUY, 1)
+
+
+def test_event_timestamp_must_be_a_pandas_timestamp() -> None:
+    with pytest.raises(TypeError):
+        OrderEvent("2024-01-02", "AAA", Side.BUY, 1)  # type: ignore[arg-type]
+    with pytest.raises(TypeError):
+        MarketEvent("2024-01-02", ("AAA",))  # type: ignore[arg-type]
+
+
+def test_fill_quantity_must_be_positive() -> None:
+    with pytest.raises(ValueError):
+        FillEvent(D1, "AAA", Side.BUY, 0, Decimal("100"), Decimal("0"))
+
+
+def test_fill_price_must_be_decimal_not_float() -> None:
+    with pytest.raises(TypeError):
+        FillEvent(D1, "AAA", Side.BUY, 1, 100.0, Decimal("0"))  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("price", ["0", "-1", "NaN", "Infinity"])
+def test_fill_price_must_be_finite_and_positive(price: str) -> None:
+    with pytest.raises(ValueError):
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal(price), Decimal("0"))
+
+
+def test_commission_must_be_decimal_not_float() -> None:
+    with pytest.raises(TypeError):
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), 0.0)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("commission", ["-0.01", "NaN", "Infinity"])
+def test_commission_must_be_finite_and_non_negative(commission: str) -> None:
+    with pytest.raises(ValueError):
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal(commission))
