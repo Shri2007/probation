@@ -16,6 +16,7 @@ Everything flows through one event queue, processed in time order.
 2. Asking for future data raises `LookaheadError`. Never silently clip or return empty.
 3. Orders fill at the NEXT bar's open, never the current close.
 4. Money in the ledger is `Decimal` (or integer cents). No floats for cash or positions' value.
+   Float prices convert via Decimal(str(float(x))), never Decimal(x).
 5. Tests never touch the network. All tests use small synthetic fixtures in tests/fixtures/.
 6. Everything is deterministic: same inputs and seeds give identical results.
 7. No new dependencies without asking.
@@ -38,6 +39,7 @@ Run all three before saying a task is done.
 ## Working style
 - Tests first for any invariant: write the failing test, then make it pass.
 - Small changes, one thing at a time. Don't refactor unrelated code.
+- Commit implementation before the tests that import it, so every commit passes on its own.
 - Expected values in accounting tests are hand-computed by me. Never generate them
   from the engine's own output.
 - If a design choice isn't covered here, propose options and ask before building.
