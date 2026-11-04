@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 510" width="1000" height="510" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="510" fill="#f8fafc"/>
+
+  <!-- Lane 1: before -->
+  <text x="20" y="32" font-size="15" font-weight="700" fill="#b91c1c">BEFORE: the agent went straight to a live account</text>
+  <path d="M200 100 H316" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrow-red)"/>
+  <path d="M520 100 H636" fill="none" stroke="#b91c1c" stroke-width="2" marker-end="url(#arrow-red)"/>
+  <rect x="40" y="70" width="160" height="60" rx="10" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="120" y="98" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Trading agent</text>
+  <text x="120" y="117" text-anchor="middle" font-size="12" fill="#5b6475">Robinhood MCP</text>
+  <rect x="320" y="70" width="200" height="60" rx="10" fill="#fecaca" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="420" y="98" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Live brokerage</text>
+  <text x="420" y="117" text-anchor="middle" font-size="12" fill="#5b6475">real orders, real cash</text>
+  <rect x="640" y="70" width="260" height="60" rx="10" fill="#fecaca" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="770" y="98" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Went AWOL, lost money</text>
+  <text x="770" y="117" text-anchor="middle" font-size="12" fill="#5b6475">no limits, no test, no warning</text>
+
+  <line x1="20" y1="165" x2="980" y2="165" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- Lane 2: now -->
+  <text x="20" y="200" font-size="15" font-weight="700" fill="#15803d">NOW: every agent serves time in Probation first</text>
+  <rect x="690" y="186" width="22" height="14" rx="3" fill="#c7d2fe" stroke="#4338ca" stroke-width="1.5"/>
+  <text x="718" y="198" font-size="12" fill="#5b6475">built</text>
+  <rect x="770" y="186" width="22" height="14" rx="3" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="798" y="198" font-size="12" fill="#5b6475">next milestones</text>
+
+  <path d="M150 280 H186" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M360 280 H396" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M600 280 H636" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M790 280 H826" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M930 330 V376" fill="none" stroke="#15803d" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="940" y="358" font-size="12" font-weight="600" fill="#15803d">pass</text>
+  <path d="M845 330 V470 H85 V334" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow-red)"/>
+  <text x="465" y="462" text-anchor="middle" font-size="13" font-weight="600" fill="#b91c1c">fail: fix the agent and rerun. Costs nothing but time.</text>
+
+  <rect x="20" y="230" width="130" height="100" rx="10" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="85" y="275" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Trading</text>
+  <text x="85" y="294" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">agent</text>
+
+  <rect x="190" y="230" width="170" height="100" rx="10" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="275" y="266" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Simulated broker</text>
+  <text x="275" y="288" text-anchor="middle" font-size="12" fill="#5b6475">same tool shapes,</text>
+  <text x="275" y="304" text-anchor="middle" font-size="12" fill="#5b6475">zero network access</text>
+
+  <rect x="400" y="230" width="200" height="100" rx="10" fill="#c7d2fe" stroke="#4338ca" stroke-width="1.5"/>
+  <text x="500" y="258" text-anchor="middle" font-size="15" font-weight="700" fill="#172033">Probation engine</text>
+  <text x="500" y="280" text-anchor="middle" font-size="12" fill="#172033">point-in-time data</text>
+  <text x="500" y="297" text-anchor="middle" font-size="12" fill="#172033">next-open fills + costs</text>
+  <text x="500" y="314" text-anchor="middle" font-size="12" fill="#172033">exact Decimal ledger</text>
+
+  <rect x="640" y="230" width="150" height="100" rx="10" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="715" y="266" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Report</text>
+  <text x="715" y="288" text-anchor="middle" font-size="12" fill="#5b6475">Sharpe, drawdown,</text>
+  <text x="715" y="304" text-anchor="middle" font-size="12" fill="#5b6475">vs buy-and-hold</text>
+
+  <rect x="830" y="230" width="150" height="100" rx="10" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="905" y="266" text-anchor="middle" font-size="15" font-weight="600" fill="#172033">Pass the gate?</text>
+  <text x="905" y="288" text-anchor="middle" font-size="12" fill="#5b6475">beats baseline,</text>
+  <text x="905" y="304" text-anchor="middle" font-size="12" fill="#5b6475">stays within limits</text>
+
+  <rect x="870" y="380" width="120" height="60" rx="10" fill="#bbf7d0" stroke="#15803d" stroke-width="1.5"/>
+  <text x="930" y="406" text-anchor="middle" font-size="14" font-weight="600" fill="#172033">Real money</text>
+  <text x="930" y="424" text-anchor="middle" font-size="12" fill="#5b6475">hard limits on</text>
+</svg>
