@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" width="900" height="320" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4338ca"/>
+    </marker>
+  </defs>
+  <rect width="900" height="320" fill="#f8fafc"/>
+  <text x="30" y="34" font-size="17" font-weight="700" fill="#172033">Why orders fill at the next open, never today's close</text>
+
+  <!-- day bands -->
+  <rect x="60" y="150" width="340" height="40" rx="8" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <text x="230" y="175" text-anchor="middle" font-size="14" font-weight="600" fill="#172033">Day t</text>
+  <rect x="500" y="150" width="340" height="40" rx="8" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <text x="670" y="175" text-anchor="middle" font-size="14" font-weight="600" fill="#172033">Day t+1</text>
+  <text x="450" y="175" text-anchor="middle" font-size="12" fill="#5b6475">overnight</text>
+
+  <g font-size="12" fill="#5b6475" text-anchor="middle">
+    <text x="60" y="212">open</text>
+    <text x="400" y="212">close</text>
+    <text x="500" y="212">open</text>
+    <text x="840" y="212">close</text>
+  </g>
+
+  <!-- order placed -->
+  <circle cx="400" cy="150" r="8" fill="#1d4ed8"/>
+  <text x="400" y="88" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">Agent sees the close,</text>
+  <text x="400" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">places an order</text>
+  <line x1="400" y1="114" x2="400" y2="140" stroke="#1d4ed8" stroke-width="2"/>
+
+  <!-- rejected fill at close -->
+  <text x="300" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">✗ fill at this close</text>
+  <text x="300" y="268" text-anchor="middle" font-size="12" fill="#b91c1c">impossible: the price was already known</text>
+
+  <!-- actual fill -->
+  <path d="M408 146 C440 110, 470 110, 496 144" fill="none" stroke="#4338ca" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <circle cx="500" cy="150" r="8" fill="#4338ca"/>
+  <text x="600" y="88" text-anchor="middle" font-size="13" font-weight="700" fill="#4338ca">✓ fills at the next open</text>
+  <text x="600" y="106" text-anchor="middle" font-size="12" fill="#4338ca">+ adverse slippage + commission</text>
+
+  <text x="620" y="250" text-anchor="middle" font-size="13" font-weight="600" fill="#172033">Order on the final bar?</text>
+  <text x="620" y="268" text-anchor="middle" font-size="12" fill="#5b6475">no next open exists, so it never fills:</text>
+  <text x="620" y="286" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#5b6475">engine.unfilled_orders</text>
+</svg>
