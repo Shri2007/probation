@@ -93,3 +93,16 @@ def test_commission_must_be_decimal_not_float() -> None:
 def test_commission_must_be_finite_and_non_negative(commission: str) -> None:
     with pytest.raises(ValueError):
         FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal(commission), Decimal("100"))
+
+
+def test_reference_price_must_be_decimal_not_float() -> None:
+    with pytest.raises(TypeError, match="reference_price must be a Decimal"):
+        FillEvent(
+            D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal("0"), 100.0  # type: ignore[arg-type]
+        )
+
+
+@pytest.mark.parametrize("price", ["0", "-1", "NaN", "Infinity"])
+def test_reference_price_must_be_finite_and_positive(price: str) -> None:
+    with pytest.raises(ValueError, match="reference_price"):
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal("0"), Decimal(price))

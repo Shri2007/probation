@@ -51,6 +51,24 @@ def test_order_fills_at_next_bars_open_never_current_close(two_symbols_csv: Path
     assert record.fill.fill_price == Decimal("104")
 
 
+def test_fill_records_next_open_as_reference_price_before_slippage(
+    two_symbols_csv: Path,
+) -> None:
+    engine = Engine(
+        MarketData.from_csv(two_symbols_csv),
+        OrderOn(DAY_3),
+        initial_cash=Decimal("10000"),
+        fees=ZERO_FEES,
+        slippage=FixedBpsSlippage(Decimal("10")),
+    )
+    engine.run()
+
+    (record,) = engine.portfolio.trade_log
+    # Fixture: day 4 open = 104. Slippage moves the fill price, not the reference.
+    assert record.fill.reference_price == Decimal("104")
+    assert record.fill.fill_price > record.fill.reference_price
+
+
 def test_order_on_final_bar_never_fills_and_is_reported_unfilled(two_symbols_csv: Path) -> None:
     order_strategy = OrderOn(LAST_DAY)
     engine = Engine(
