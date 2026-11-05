@@ -159,8 +159,8 @@ Status: the core engine (milestones 1 and 2) is done and tested. The parts that 
 
 - [x] **M1: Point-in-time data and the event loop.** Lookahead raises.
 - [x] **M2: Execution and portfolio.** Next-open fills, fees, slippage, exact-Decimal ledger, hand-computed accounting test.
-- [x] **M3: Metrics and a baseline.** Total return, CAGR, volatility, Sharpe, max drawdown and its duration, trade count, total costs paid. Buy-and-hold as the bar the agent has to clear.
-- [x] **Agent adapter.** Run the Robinhood MCP agent's decision logic as a `Strategy` against a **simulated broker** that exposes the same tool shapes (quotes, positions, place order) backed by the point-in-time handle and the execution simulator. A test fails if any real broker tool is reachable during a run.
+- [ ] **M3: Metrics and a baseline.** Total return, CAGR, volatility, Sharpe, max drawdown and its duration, trade count, total costs paid. Buy-and-hold as the bar the agent has to clear.
+- [ ] **Agent adapter.** Run the Robinhood MCP agent's decision logic as a `Strategy` against a **simulated broker** that exposes the same tool shapes (quotes, positions, place order) backed by the point-in-time handle and the execution simulator. A test fails if any real broker tool is reachable during a run.
 - [ ] **Hard risk constraints.** Max position size, max daily loss, max orders per day, a kill switch. These are enforced by the engine, not by trusting the agent, and get tested in the backtest exactly as they would apply live.
 - [ ] **Walk-forward evaluation.** Tune on one window, test on the next, never on the same data.
 - [ ] **LLM-specific honesty.** An LLM agent may "remember" what a stock did, which is lookahead no data handle can block. Plan: favor dates after the model's training cutoff, and cache responses so runs are reproducible.
