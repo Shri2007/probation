@@ -32,7 +32,7 @@ Run all three before saying a task is done.
 ## Layout
 - src/backtester/: data.py, events.py, engine.py, execution.py, portfolio.py,
   strategy.py, metrics.py, walkforward.py
-- strategies/: buy_and_hold.py, momentum.py, mean_reversion.py
+- src/backtester/strategies/: buy_and_hold.py, momentum.py, mean_reversion.py
 - tests/: tests, with fixtures/ for synthetic CSVs
 - docs/: design doc
 
