@@ -91,7 +91,15 @@ class ExecutionSimulator:
             price = self._slippage.fill_price(order.side, reference)
             commission = self._fees.commission(order, price)
             fills.append(
-                FillEvent(now, order.symbol, order.side, order.quantity, price, commission)
+                FillEvent(
+                    now,
+                    order.symbol,
+                    order.side,
+                    order.quantity,
+                    price,
+                    commission,
+                    reference,
+                )
             )
         self._pending = still_pending
         return fills

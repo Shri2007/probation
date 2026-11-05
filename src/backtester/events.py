@@ -97,6 +97,7 @@ class FillEvent:
     quantity: int
     fill_price: Decimal
     commission: Decimal
+    reference_price: Decimal
     priority: ClassVar[EventPriority] = EventPriority.FILL
 
     def __post_init__(self) -> None:
@@ -105,6 +106,7 @@ class FillEvent:
         _check_trade(self.side, self.quantity)
         _check_money("fill_price", self.fill_price, allow_zero=False)
         _check_money("commission", self.commission, allow_zero=True)
+        _check_money("reference_price", self.reference_price, allow_zero=False)
 
 
 Event = MarketEvent | OrderEvent | FillEvent

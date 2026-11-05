@@ -23,7 +23,7 @@ def test_same_timestamp_pops_fill_then_market_then_order() -> None:
     queue = EventQueue()
     order = OrderEvent(D1, "AAA", Side.BUY, 10)
     market = MarketEvent(D1, ("AAA",))
-    fill = FillEvent(D1, "AAA", Side.BUY, 10, Decimal("100.00"), Decimal("0"))
+    fill = FillEvent(D1, "AAA", Side.BUY, 10, Decimal("100.00"), Decimal("0"), Decimal("100.00"))
     for event in (order, market, fill):
         queue.push(event)
 
@@ -70,26 +70,26 @@ def test_event_timestamp_must_be_a_pandas_timestamp() -> None:
 
 def test_fill_quantity_must_be_positive() -> None:
     with pytest.raises(ValueError):
-        FillEvent(D1, "AAA", Side.BUY, 0, Decimal("100"), Decimal("0"))
+        FillEvent(D1, "AAA", Side.BUY, 0, Decimal("100"), Decimal("0"), Decimal("100"))
 
 
 def test_fill_price_must_be_decimal_not_float() -> None:
     with pytest.raises(TypeError):
-        FillEvent(D1, "AAA", Side.BUY, 1, 100.0, Decimal("0"))  # type: ignore[arg-type]
+        FillEvent(D1, "AAA", Side.BUY, 1, 100.0, Decimal("0"), Decimal("100"))  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize("price", ["0", "-1", "NaN", "Infinity"])
 def test_fill_price_must_be_finite_and_positive(price: str) -> None:
     with pytest.raises(ValueError):
-        FillEvent(D1, "AAA", Side.BUY, 1, Decimal(price), Decimal("0"))
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal(price), Decimal("0"), Decimal("100"))
 
 
 def test_commission_must_be_decimal_not_float() -> None:
     with pytest.raises(TypeError):
-        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), 0.0)  # type: ignore[arg-type]
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), 0.0, Decimal("100"))  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize("commission", ["-0.01", "NaN", "Infinity"])
 def test_commission_must_be_finite_and_non_negative(commission: str) -> None:
     with pytest.raises(ValueError):
-        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal(commission))
+        FillEvent(D1, "AAA", Side.BUY, 1, Decimal("100"), Decimal(commission), Decimal("100"))

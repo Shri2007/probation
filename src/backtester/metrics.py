@@ -29,6 +29,8 @@ class Metrics:
     underwater_at_end: bool  # True if the curve ends below its previous peak
     trade_count: int  # number of fills
     commissions_paid: Decimal
+    slippage_paid: Decimal  # sum of abs(fill_price - reference_price) * quantity
+    total_costs: Decimal  # commissions_paid + slippage_paid
 
 
 def compute_metrics(
@@ -59,6 +61,10 @@ def compute_metrics(
     max_dd, longest, underwater = _drawdown(equity)
 
     commissions = sum((record.fill.commission for record in trade_log), Decimal("0"))
+    slippage = sum(
+        (abs(r.fill.fill_price - r.fill.reference_price) * r.fill.quantity for r in trade_log),
+        Decimal("0"),
+    )
     return Metrics(
         total_return=total_return,
         cagr=cagr,
@@ -69,6 +75,8 @@ def compute_metrics(
         underwater_at_end=underwater,
         trade_count=len(trade_log),
         commissions_paid=commissions,
+        slippage_paid=slippage,
+        total_costs=commissions + slippage,
     )
 
 

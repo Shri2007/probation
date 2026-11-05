@@ -16,7 +16,9 @@ FIRST_DAY = pd.Timestamp("2024-01-02")
 
 
 def fill(side: Side, quantity: int, price: str, commission: str = "0") -> FillEvent:
-    return FillEvent(D1, "AAA", side, quantity, Decimal(price), Decimal(commission))
+    return FillEvent(
+        D1, "AAA", side, quantity, Decimal(price), Decimal(commission), Decimal(price)
+    )
 
 
 class SellAAAOnFirstDay:
